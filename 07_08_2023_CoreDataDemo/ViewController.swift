@@ -13,7 +13,12 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         //addPersonRecords()
         retriveRecords()
+        deletePersonRecord()
+        retriveRecords()
+        updatePersonRecord()
+        retriveRecords()
     }
+    
     
     func addPersonRecords(){
         
@@ -56,6 +61,51 @@ class ViewController: UIViewController {
             
         } catch {
             print("Failed catching results")
+        }
+    }
+    
+    func deletePersonRecord(){
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>.init(entityName: "Person")
+        
+        fetchRequest.predicate = NSPredicate(format: "name = %@", "Person1")
+        do{
+            let fetchedResults = try managedContext.fetch(fetchRequest)
+            let objectToBeDeleted = fetchedResults[0] as! NSManagedObject
+            managedContext.delete(objectToBeDeleted)
+            do{
+                try managedContext.save()
+            }catch{
+                print("Error")
+            }
+        }catch{
+            print("Error")
+        }
+    }
+    
+    func updatePersonRecord(){
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>.init(entityName: "Person")
+        
+        fetchRequest.predicate = NSPredicate(format: "name = %@", "Person2")
+        do{
+            let fetchedResults = try managedContext.fetch(fetchRequest)
+            let objectToBeUpdated = fetchedResults[0] as! NSManagedObject
+            objectToBeUpdated.setValue("Tushar", forKey: "name")
+            objectToBeUpdated.setValue("Tushar@bitcode.in", forKey: "email")
+            do{
+                try managedContext.save()
+            }catch{
+                print("Error")
+            }
+        }catch{
+            print("Error")
         }
     }
 }
